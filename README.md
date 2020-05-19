@@ -10,7 +10,10 @@ However, there are conditions:
 
 You will have between five and fifteen chances to try and outwit the computer. For the purposes of the game, each possible outcome is awarded a numeric point value (in parentheses  above)
 
-Will the computer betray you or can you dominate and achieve the higher score? 
+-----
 
-------------------------------
+### Can you outwit the computer and achieve the higher score? 
 
+-----
+
+TODO: provide description of code structure and implementation of features here. 
