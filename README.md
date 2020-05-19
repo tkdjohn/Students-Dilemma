@@ -12,5 +12,5 @@ You will have between five and fifteen chances to try and outwit the computer. F
 
 Will the computer betray you or can you dominate and achieve the higher score? 
 
-------------------------------------------------------------------------
+------------------------------
 
