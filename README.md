@@ -1,5 +1,6 @@
 # Student's Dilemma
-It's you versus a fellow **CodeLouisville** student (played by the computer). You both have been caught cheating on your final project, however it isn't clear whether one of you plagiarized the other's project or if you were both plagiarized from an outside source. You have been offered a deceptively simple choice: confess or not. 
+y
+It's you versus a fellow **CodeLouisville** student (played by the computer). You both have been caught cheating on your final project, however it isn't clear whether one of you plagiarized the other's project or if you both plagiarized from an outside source. In an effort to uncover the whole truth, you both have been offered a deceptively simple choice: confess or not. 
 
 However, there are conditions:
 - If you both confess: You both will fail the class, but in light of your honesty, both will be allowed to re-take the class next session. (0 points)
