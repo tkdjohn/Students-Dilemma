@@ -1,6 +1,0 @@
-class Shape(object):
-    @property
-    @abstractmethod
-    def Area (self):
-
-

@@ -1,4 +1,4 @@
-import Settings 
+import Settings
 class Human_Player(object):
     '''Represents a human player.'''
 
@@ -33,9 +33,10 @@ class Human_Player(object):
             choices_string += f' {choice} ({choice.value})'
             if (choices_left > 0):
                 choices_string  += ' or'
- 
+
+        print()
         choice = self.Prompt('You are seated in a dark room with a bright light shining in your face. A mentor looms over you, looking stern. ' \
-            "The mentor's mouth does not move, yet you hear a commanding voice say, 'Your classmate has already been interrogated. " \
+            "The mentor's mouth does not move, yet you hear a commanding voice say, 'Your classmate has already been interrogated. '" \
             f"Do you{choices_string}? ").lower()
 
         self._most_recent_choice, trigger_bonus = self.__validate_choice_(choice)
@@ -45,11 +46,12 @@ class Human_Player(object):
         self.__opponent_score_ += opponent_round_score
         self._score += round_score
 
+        print()
         self.Report(f'You chose to {self._most_recent_choice} for {round_score} points.')
         self.Report(f'Your classmate chose to {opponent_choice} for {opponent_round_score} points.')
         self.Report(f'=========== Scores ===========')
-        self.Report(f'          You: {self._score}') 
-        self.Report(f'Your Opponent: {self.__opponent_score_}') 
+        self.Report(f'          You: {self._score}')
+        self.Report(f'Your Opponent: {self.__opponent_score_}')
         self.Report('')
 
     def End_Game(self):
@@ -57,7 +59,7 @@ class Human_Player(object):
         if self._score > self.__opponent_score_:
             win_lose = "Congratulations, you outsmarted the computer!"
         self.Report('=========== GAME OVER ===========')
-        self.Report ('          You: {: >3d}'.format(self._score)) 
+        self.Report ('          You: {: >3d}'.format(self._score))
         self.Report ('Your Opponent: {: >3d}'.format(self.__opponent_score_))
         self.Report (win_lose)
         self.Report ('=========== GAME OVER ===========')
@@ -71,7 +73,7 @@ class Human_Player(object):
     def __init__(self):
         self._score = 0
         self._bonus = 0
-        self.__opponent_score_ = 0 
+        self.__opponent_score_ = 0
         self.__secret_bonus_word = 'idkfa'
 
     def __validate_choice_(self, choice):
@@ -81,7 +83,7 @@ class Human_Player(object):
             activate_bonus = True
         elif choice not in (Settings.Choices.values_list()):
 
-            # The mentors have little patience for stall tactics. If player doesn't respond 
+            # The mentors have little patience for stall tactics. If player doesn't respond
             # appropriately, assume they choose not to confess.
             print ("The mentor looks at you even more stern and shakes their head."\
                 " The voice states flatly, 'Not choosing is still making a choice.'")

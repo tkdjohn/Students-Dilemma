@@ -3,63 +3,66 @@ import Settings
 
 class Computer_Player(object):
     '''Represents a computer player.'''
-    
+
     @property
     def Bonus(self):
-        return(self._bonus)
+        return(self.__bonus)
 
     @property
     def Score(self):
-        return(self._score)
+        return(self.__score)
 
     @property
     def Most_Recent_Choice(self):
-        return(self._most_recent_choice)
-    
+        return(self.__most_recent_choice)
+
     @Most_Recent_Choice.setter
     def Most_Recent_Choice(self, value):
-        self._most_recent_choice = value
+        self.__most_recent_choice = value
 
     def Set_Bonus(self, value):
-        self._bonus = value
+        self.__bonus = value
 
     def Choose(self):
-        self._most_recent_choice = self.__choose_method_()
-        return False 
+        self.__most_recent_choice = self.__choose_method_()
+        return False
 
     def Update_Results(self, round_score, opponent_round_score, opponent_choice):
         self.__opponent_previous_choice_ = opponent_choice
         self.__opponent_score_ += opponent_round_score
-        self._score += round_score
+        self.__score += round_score
 
     def End_Game(self):
         #TODO: record statistics
         return
-        
+
     def __init__(self):
         random.seed()
-        self._bonus = 0
-        self._score = 0
-        #TODO: set choose method randomly
-        #self.__choose_method_ = self.__always_stay_silent_
-        #self.__choose_method_ = self.__always_confess_
-        self.__choose_method_ = self.__tit_for_that_
-        #self.__choose_method_ = self.__random_
-        ##self.__choose_method_ = self.__alternate_
-        ##self.__choose_method_ = self. __risk_analysis_competition_
-        ##self.__choose_method_ = self. __risk_analysis_highest_personal_score_
+        self.__bonus = 0
+        self.__score = 0
 
+        strategies = [
+            self.__always_stay_silent_,
+            self.__always_confess_,
+            self.__always_confess_,
+            self.__always_confess_,
+            self.__alternate_,
+            self.__risk_analysis_competition_,
+            self.__risk_analysis_highest_personal_score_]
+
+        self.__choose_method_ = random.choice(strategies)
+        print(self.__choose_method_)
         self.__opponent_previous_choice_ = None
-        self._most_recent_choice = Settings.Choices.confess
+        self.__most_recent_choice = Settings.Choices.confess
         self.__opponent_score_ = 0
-    
-    ############################ strategy methods 
-    
+
+    ############################ strategy methods
+
     # This strategy's strong suit is that the opponent is unlikely to be able
-    # to predict the computer's choice. However, it will not consistently perform 
+    # to predict the computer's choice. However, it will not consistently perform
     def __random_(self):
         return random.choice(Settings.Choices.list())
-    
+
     # This strategy will generally tie with the opponent simply because it attempts
     # to provide feedback to the opponent in the hopes that the opponent will realize
     # that both confessing is the better choice.
@@ -68,7 +71,7 @@ class Computer_Player(object):
             self.__opponent_previous_choice_ = Settings.Choices.stay_silent
         return self.__opponent_previous_choice_
 
-    # This strategy can achieve both the hightest and lowest scores, depending 
+    # This strategy can achieve both the hightest and lowest scores, depending
     # on the other player's choices.
     # See the comments for the __risk_analysis_highest_personal_score_ strategy
     # below for information on why.
@@ -79,23 +82,23 @@ class Computer_Player(object):
         return Settings.Choices.stay_silent
 
     def __alternate_(self):
-        return self._most_recent_choice.next()
+        return self.__most_recent_choice.next()
 
     # The idea here is to evaluate the risk v/s reward, making the choice
-    # that can yield the greatest reward, within the acceptable risk, when the 
-    # game is viewed as achieveing the highest possible score, with no regard of 
+    # that can yield the greatest reward, within the acceptable risk, when the
+    # game is viewed as achieveing the highest possible score, with no regard of
     # the opponent's score.
     # As it turns out, this strategy is STILL no different than stay_silent if the
     # scoring matrix follows the standard Prisoner's Dilemma paradigm where
-    # both players get the same reward for making the same choice, and players 
-    # are rewarded/peanalized the same amounts for making opposing choices. 
+    # both players get the same reward for making the same choice, and players
+    # are rewarded/peanalized the same amounts for making opposing choices.
     # The actual values of the rewards/penalties are irrelevant as long as they
     # are consistant because the paradigm dictates:
-    # ex: both confess = A points each 
+    # ex: both confess = A points each
     #     both stay silent = B points each
     #     one confess/other silent = C points for confess, D points for silence
     #   WHERE D > A > B > C
-    # So, staying silent will always have less chance of risk (B), with greater 
+    # So, staying silent will always have less chance of risk (B), with greater
     # chance of reward (D).
     # Note that this is NOT the BEST possible result (hightest possible score).
     # If both players consistently confess, a higher overall score will be achieved,
@@ -107,35 +110,35 @@ class Computer_Player(object):
         for c_choice in Settings.Choices:
             points = 0
             # We could maybe be smarter here, but for now just average the
-            # points we might receive for this choice 
+            # points we might receive for this choice
             for p_choice in Settings.Choices:
                 scores = Settings.Get_Score(p_choice, c_choice)
                 points += scores[1]
-            
+
             avg_pts = points/len(Settings.Choices)
             if final_choice == None or avg_pts > final_avg_pts:
                 final_choice = c_choice
                 final_avg_pts = avg_pts
- 
+
         return final_choice
 
     # The idea here is to evaluate the risk v/s reward, making the choice
-    # that can yield the greatest reward, within the acceptable risk, when 
+    # that can yield the greatest reward, within the acceptable risk, when
     # the game is viewed as a competition between players for the best score.
     # As it turns out, this strategy is no different than stay_silent if the
     # scoring matrix follows the standard Prisoner's Dilemma paradigm where
-    # both players get the same reward for making the same choice, and players 
-    # are rewarded/peanalized the same amounts for making opposing choices. 
+    # both players get the same reward for making the same choice, and players
+    # are rewarded/peanalized the same amounts for making opposing choices.
     # The actual values of the rewards/penalties are irrelevant as long as they
     # are consistant (because we're comparing against the other player).
-    # ex: both confess = 2 points each 
+    # ex: both confess = 2 points each
     #     both stay silent = -2 points each
     #     one confess/other silent = -3 points for confess, +3 points for silence
-    # When we view this as a competition with the other player, getting the same 
-    # points (positive or negative) means no overall change in the relative scores 
+    # When we view this as a competition with the other player, getting the same
+    # points (positive or negative) means no overall change in the relative scores
     # and therefore no real risk. When viewed this way, staying silent means either
-    # no net change, or a net gain of 6 points over the other player;  confessing 
-    # means no net change or a net loss of 6 points over the other player. 
+    # no net change, or a net gain of 6 points over the other player;  confessing
+    # means no net change or a net loss of 6 points over the other player.
     # The winning choice is obvious.
     def __risk_analysis_competition_(self):
         risk_reward = dict()
