@@ -1,88 +1,88 @@
 import random
 import Settings
 
-class Computer_Player(object):
+class ComputerPlayer(object):
     '''Represents a computer player.'''
 
     @property
     def Bonus(self):
-        return(self.__bonus)
+        return(self.bonus)
 
     @property
     def Score(self):
-        return(self.__score)
+        return(self.score)
 
     @property
-    def Most_Recent_Choice(self):
-        return(self.__most_recent_choice)
+    def MostRecentChoice(self):
+        return(self.mostRecentChoice)
 
-    @Most_Recent_Choice.setter
-    def Most_Recent_Choice(self, value):
-        self.__most_recent_choice = value
+    @MostRecentChoice.setter
+    def MostRecentChoice(self, value):
+        self.mostRecentChoice = value
 
-    def Set_Bonus(self, value):
-        self.__bonus = value
+    def SetBonus(self, value):
+        self.bonus = value
 
     def Choose(self):
-        self.__most_recent_choice = self.__choose_method_()
+        self.mostRecentChoice = self.chooseMethod()
         return False
 
-    def Update_Results(self, round_score, opponent_round_score, opponent_choice):
-        self.__opponent_previous_choice_ = opponent_choice
-        self.__opponent_score_ += opponent_round_score
-        self.__score += round_score
+    def UpdateResults(self, roundScore, opponentRoundScore, opponentChoice):
+        self.opponentPreviousChoice = opponentChoice
+        self.opponentScore += opponentRoundScore
+        self.score += roundScore
 
-    def End_Game(self):
+    def EndGame(self):
         #TODO: record statistics
         return
 
     def __init__(self):
         random.seed()
-        self.__bonus = 0
-        self.__score = 0
+        self.bonus = 0
+        self.score = 0
 
         strategies = [
-            self.__always_stay_silent_,
-            self.__always_confess_,
-            self.__always_confess_,
-            self.__always_confess_,
-            self.__alternate_,
-            self.__risk_analysis_competition_,
-            self.__risk_analysis_highest_personal_score_]
+            self.alwaysstay_silent,
+            self.alwaysConfess,
+            self.alwaysConfess,
+            self.alwaysConfess,
+            self.alternate,
+            self.riskAnalysisCompetition,
+            self.riskAnalysisHighestPersonalScore]
 
-        self.__choose_method_ = random.choice(strategies)
-        print(self.__choose_method_)
-        self.__opponent_previous_choice_ = None
-        self.__most_recent_choice = Settings.Choices.confess
-        self.__opponent_score_ = 0
+        self.chooseMethod = random.choice(strategies)
+        ##DEBUG print(self.chooseMethod)
+        self.opponentPreviousChoice = None
+        self.mostRecentChoice = Settings.Choices.confess
+        self.opponentScore = 0
 
     ############################ strategy methods
 
     # This strategy's strong suit is that the opponent is unlikely to be able
     # to predict the computer's choice. However, it will not consistently perform
-    def __random_(self):
+    def random(self):
         return random.choice(Settings.Choices.list())
 
     # This strategy will generally tie with the opponent simply because it attempts
     # to provide feedback to the opponent in the hopes that the opponent will realize
     # that both confessing is the better choice.
-    def __tit_for_that_(self):
-        if self.__opponent_previous_choice_ is None:
-            self.__opponent_previous_choice_ = Settings.Choices.stay_silent
-        return self.__opponent_previous_choice_
+    def titForThat(self):
+        if self.opponentPreviousChoice is None:
+            self.opponentPreviousChoice = Settings.Choices.stay_silent
+        return self.opponentPreviousChoice
 
     # This strategy can achieve both the hightest and lowest scores, depending
     # on the other player's choices.
-    # See the comments for the __risk_analysis_highest_personal_score_ strategy
+    # See the comments for the riskAnalysisHighestPersonalScore strategy
     # below for information on why.
-    def __always_confess_(self):
+    def alwaysConfess(self):
         return Settings.Choices.confess
 
-    def __always_stay_silent_(self):
+    def alwaysstay_silent(self):
         return Settings.Choices.stay_silent
 
-    def __alternate_(self):
-        return self.__most_recent_choice.next()
+    def alternate(self):
+        return self.mostRecentChoice.next()
 
     # The idea here is to evaluate the risk v/s reward, making the choice
     # that can yield the greatest reward, within the acceptable risk, when the
@@ -103,24 +103,24 @@ class Computer_Player(object):
     # Note that this is NOT the BEST possible result (hightest possible score).
     # If both players consistently confess, a higher overall score will be achieved,
     # but this depends on the other player's consitant cooperation.
-    def __risk_analysis_highest_personal_score_(self):
-        risk_reward = dict()
-        final_choice = None
-        final_avg_pts = 0
-        for c_choice in Settings.Choices:
+    def riskAnalysisHighestPersonalScore(self):
+        riskReward = dict()
+        finalChoice = None
+        finalAvgPts = 0
+        for cChoice in Settings.Choices:
             points = 0
             # We could maybe be smarter here, but for now just average the
             # points we might receive for this choice
-            for p_choice in Settings.Choices:
-                scores = Settings.Get_Score(p_choice, c_choice)
+            for pChoice in Settings.Choices:
+                scores = Settings.GetScore(pChoice, cChoice)
                 points += scores[1]
 
-            avg_pts = points/len(Settings.Choices)
-            if final_choice == None or avg_pts > final_avg_pts:
-                final_choice = c_choice
-                final_avg_pts = avg_pts
+            avgPts = points/len(Settings.Choices)
+            if finalChoice == None or avgPts > finalAvgPts:
+                finalChoice = cChoice
+                finalAvgPts = avgPts
 
-        return final_choice
+        return finalChoice
 
     # The idea here is to evaluate the risk v/s reward, making the choice
     # that can yield the greatest reward, within the acceptable risk, when
@@ -140,39 +140,39 @@ class Computer_Player(object):
     # no net change, or a net gain of 6 points over the other player;  confessing
     # means no net change or a net loss of 6 points over the other player.
     # The winning choice is obvious.
-    def __risk_analysis_competition_(self):
-        risk_reward = dict()
-        for c_choice in Settings.Choices:
+    def riskAnalysisCompetition(self):
+        riskReward = dict()
+        for cChoice in Settings.Choices:
             risk = 0
             reward = 0
-            for p_choice in Settings.Choices:
-                scores = Settings.Get_Score(p_choice, c_choice)
+            for pChoice in Settings.Choices:
+                scores = Settings.GetScore(pChoice, cChoice)
                 spread = scores[1] - scores[0]
-                # find largest reward for this c_choice (by def rewards are > 0)
+                # find largest reward for this copmuter choice (by def rewards are > 0)
                 if spread > 0 and spread > reward:
                     reward = spread
                 # find the lowest risk (by def risks are < 0 - so lowest risk = largest value)
                 if spread < 0 and abs(spread) > risk:
                     risk = abs(spread)
 
-            risk_reward[c_choice] = (risk, reward)
+            riskReward[cChoice] = (risk, reward)
 
-        max_acceptable_risk = self.Score - self.__opponent_score_
-        best_reward = 0
-        lowest_risk = 0
-        final_choice = None
-        lowest_risk_choice = None
-        for choice in risk_reward:
-            risk = risk_reward[choice][0]
-            reward = risk_reward[choice][1]
-            if risk <= lowest_risk:
-                lowest_risk = risk
-                lowest_risk_choice = choice
-            if risk < max_acceptable_risk and reward >= best_reward:
-                best_reward = reward
-                final_choice = choice
+        maxAcceptableRisk = self.Score - self.opponentScore
+        bestReward = 0
+        lowestRisk = 0
+        finalChoice = None
+        lowestRiskChoice = None
+        for choice in riskReward:
+            risk = riskReward[choice][0]
+            reward = riskReward[choice][1]
+            if risk <= lowestRisk:
+                lowestRisk = risk
+                lowestRiskChoice = choice
+            if risk < maxAcceptableRisk and reward >= bestReward:
+                bestReward = reward
+                finalChoice = choice
 
-        if final_choice == None:
-            final_choice = lowest_risk_choice
+        if finalChoice == None:
+            finalChoice = lowestRiskChoice
 
-        return final_choice
+        return finalChoice
