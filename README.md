@@ -1,5 +1,5 @@
+soem changes
 # Student's Dilemma
-
 You and a fellow student (played by the computer) have been caught cheating on your final project, however it isn't clear whether one of you plagiarized the other's project or if you conspired together. In an effort to uncover the whole truth, you are both interrogated. During interrogation you each are offered a simple choice: confess or stay silent.
 
 However, there are conditions:
